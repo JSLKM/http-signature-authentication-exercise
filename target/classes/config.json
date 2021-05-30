@@ -1,0 +1,9 @@
+{
+  "keyId": "signature-test-66289",
+  "algorithm": "rsa-sha256",
+  "host": "staging.authservices.satispay.com",
+  "resourcePath": "/wally-services/protocol/tests/signature",
+  "method": "PUT",
+  "body": "put me there",
+  "headers": {}
+}

@@ -1,0 +1,7 @@
+{
+  "host": "host.com",
+  "resourcePath": "/foo",
+  "headers": {
+    "hey": "fsd"
+  }
+}

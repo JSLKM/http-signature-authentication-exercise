@@ -1,0 +1,11 @@
+{
+  "keyId": "key-id",
+  "algorithm": "alg-id",
+  "host": "host.com",
+  "resourcePath": "/foo",
+  "method": "GET",
+  "headers": {
+    "test": "test-headers"
+  },
+  "body": "something"
+}

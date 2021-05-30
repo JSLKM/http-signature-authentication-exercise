@@ -12,9 +12,9 @@ public class Utility {
         return "SHA-256=" + Base64.getEncoder().encodeToString(digest);
     }
 
-    public static String readRsaPrivateKey() throws IOException {
+    public static String readFile(String filePath) throws IOException {
         StringBuilder sb = new StringBuilder();
-        InputStream in = Utility.class.getClassLoader().getResourceAsStream("keys/client-rsa-private-key.pem");
+        InputStream in = Utility.class.getClassLoader().getResourceAsStream(filePath);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String line;
         while((line = br.readLine()) != null) {

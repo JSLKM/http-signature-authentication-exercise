@@ -1,3 +1,5 @@
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -22,7 +24,7 @@ public class Request {
         this.headers.replaceAll((k, v) -> Utility.removeLeadingAndTrailingOWS(v));
         this.body = body;
 
-        if (this.body != null) {
+        if (this.body != null && !this.body.trim().isEmpty()) {
             try {
                 this.headers.put("Digest", Utility.generateDigest(body));
             } catch (NoSuchAlgorithmException e) {
@@ -31,9 +33,21 @@ public class Request {
         }
     }
 
+    public String getMethod() {
+        return method;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public LinkedHashMap<String, String> getHeaders() {
+        return headers;
+    }
+
     public String ConstructSignatureString() {
-        String result = "(request-target): " + this.method.toLowerCase() + " " + this.resourcePath;
-        for (Map.Entry<String, String> entry: this.headers.entrySet()) {
+        String result = "(request-target): " + method.toLowerCase() + " " + resourcePath;
+        for (Map.Entry<String, String> entry: headers.entrySet()) {
             result = result + "\n" + entry.getKey().toLowerCase() + ": " + entry.getValue();
         }
         System.out.println("\n-----------BEGIN: Construct Signature String-----------");
@@ -44,7 +58,7 @@ public class Request {
 
     public String CreateSignature() throws Exception {
         String input = ConstructSignatureString();
-        String keyString = Utility.readRsaPrivateKey()
+        String keyString = Utility.readFile("keys/client-rsa-private-key.pem")
                 .replaceAll("-----END PRIVATE KEY-----", "")
                 .replaceAll("-----BEGIN PRIVATE KEY-----", "")
                 .replaceAll("\n", "");
@@ -68,11 +82,11 @@ public class Request {
     }
 
     private String getAuthorizationHeaders() {
-        String headers = "(request-target)";
-        for (Map.Entry<String, String> entry: this.headers.entrySet()) {
-            headers = headers + " " + entry.getKey().toLowerCase();
+        String result = "(request-target)";
+        for (Map.Entry<String, String> entry: headers.entrySet()) {
+            result = result + " " + entry.getKey().toLowerCase();
         }
-        return headers;
+        return result;
     }
 
     public String getAuthorizationValue(String keyId, String algorithm) throws Exception {
@@ -85,4 +99,10 @@ public class Request {
         System.out.println("-----------END: Get Authorization value-----------\n");
         return result;
     }
+
+    public URL getURL() throws MalformedURLException {
+        String url = String.format("https://%s%s", host, resourcePath);
+        return new URL(url);
+    }
 }
+
